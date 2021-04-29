@@ -9,8 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TaskMaster">
-        <activity android:name=".TaskDetailPage"
-            android:parentActivityName=".MainActivity" ></activity>
+        <activity android:name=".TaskItemRecyclerView"></activity>
+        <activity
+            android:name=".TaskDetailPage"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".SettingsPage"
             android:parentActivityName=".MainActivity" />
