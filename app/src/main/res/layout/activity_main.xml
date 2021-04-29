@@ -20,8 +20,8 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="340dp"
-        android:layout_height="241dp"
+        android:layout_width="326dp"
+        android:layout_height="147dp"
         android:layout_marginTop="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.493"
@@ -71,19 +71,21 @@
 
     <Button
         android:id="@+id/firstTaskButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:text="firstTask"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="@+id/thirdTaskButton"
         app:layout_constraintEnd_toStartOf="@+id/thirdTaskButton"
+        app:layout_constraintHorizontal_bias="0.53"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/thirdTaskButton" />
+        app:layout_constraintTop_toTopOf="@+id/thirdTaskButton"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/thirdTaskButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginTop="48dp"
         android:text="secondTask"
         android:textSize="10sp"
@@ -93,8 +95,8 @@
 
     <Button
         android:id="@+id/secondTaskButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:text="thirdTask"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="@+id/thirdTaskButton"
@@ -103,4 +105,13 @@
         app:layout_constraintStart_toEndOf="@+id/thirdTaskButton"
         app:layout_constraintTop_toTopOf="@+id/thirdTaskButton"
         app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/taskListRecyclerView"
+        android:layout_width="335dp"
+        android:layout_height="105dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/thirdTaskButton" />
 </androidx.constraintlayout.widget.ConstraintLayout>

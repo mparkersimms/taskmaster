@@ -12,6 +12,8 @@
     - Set up the Task Detail page, and created three buttons on the home page all of which take the user to the task detail page.
         - Each of the buttons displays a different task title, and displays that title on the task detail page when clicked.
 
+-4/28/21
+    - Implemented a RecyclerView on the home page that displays the hardcoded tasks, and takes the user to the task detail page when clicked on.
 
 ## Screenshots
 
@@ -27,4 +29,7 @@
 ![TaskDetailPage1](screenshots/Day2/TaskDetailPage1.png)
 ![TaskDetailPage2](screenshots/Day2/TaskDetailPage2.png)
 ![TaskDetailPage3](screenshots/Day2/TaskDetailPage3.png)
+
+- 4/28/21
+![homepage](screenshots/Day3/homepage.png)
 
