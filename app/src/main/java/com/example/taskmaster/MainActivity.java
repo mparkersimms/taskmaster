@@ -3,6 +3,7 @@ package com.example.taskmaster;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,14 +22,21 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements TaskItemRecycleViewAdapter.ClickOnTaskAble {
     String TAG = "msimms_main";
 
+    TaskDatabase taskDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        List<Task> taskItems = new ArrayList<>();
-        taskItems.add(new Task("Go climbing", "With all your ropes, and gear", "New"));
-        taskItems.add(new Task("Walk the dog", "With your feet, and leash", "New"));
-        taskItems.add(new Task("Ride Dirt Bike", "With all your gear, and helmet", "New"));
+
+        taskDatabase = Room.databaseBuilder(getApplicationContext(), TaskDatabase.class, "msimms_tasks")
+                .allowMainThreadQueries()
+                .build();
+
+        List<Task> taskItems = taskDatabase.taskDao().findAll();
+//        taskItems.add(new Task("Go climbing", "With all your ropes, and gear", "New"));
+//        taskItems.add(new Task("Walk the dog", "With your feet, and leash", "New"));
+//        taskItems.add(new Task("Ride Dirt Bike", "With all your gear, and helmet", "New"));
 
         RecyclerView homePageRecyclerView = findViewById(R.id.taskListRecyclerView);
         RecyclerView.LayoutManager lm = new LinearLayoutManager(this);
@@ -118,7 +126,9 @@ public class MainActivity extends AppCompatActivity implements TaskItemRecycleVi
     public void handleClickOnTask(RecyclerView.ViewHolder recyclerViewHolder) {
         Intent goToDetailPageIntent = new Intent(MainActivity.this, TaskDetailPage.class);
         String title = (String)((TextView)recyclerViewHolder.itemView.findViewById(R.id.taskItemFragmentTextView)).getText();
-        goToDetailPageIntent.putExtra("Title", title);
+        int itemId = recyclerViewHolder.itemView.getId();
+//        goToDetailPageIntent.putExtra("Title", title);
+        goToDetailPageIntent.putExtra("id", itemId);
         Log.i(TAG, "handleClickOnTask: " + title);
         startActivity(goToDetailPageIntent);
 

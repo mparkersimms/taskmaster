@@ -15,6 +15,10 @@
 -4/28/21
     - Implemented a RecyclerView on the home page that displays the hardcoded tasks, and takes the user to the task detail page when clicked on.
 
+-4/29/21
+    - Implemented Room database usage in the app. Store Task instances in the database, populating the RecyclerView on the home page with task titles from
+    database, and then displaying the task title, description, and state on the Task Detail page.
+
 ## Screenshots
 
 - 4/26/21

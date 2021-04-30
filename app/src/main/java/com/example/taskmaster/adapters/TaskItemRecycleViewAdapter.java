@@ -43,7 +43,9 @@ public class TaskItemRecycleViewAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ((TextView)holder.itemView.findViewById(R.id.taskItemFragmentTextView))
-                .setText(taskItems.get(position).getTitle());
+                .setText(taskItems.get(position).getTitle() + taskItems.get(position).id);
+        int itemId = (int)taskItems.get(position).id;
+        holder.itemView.setId(itemId);
 
         holder.itemView.setOnClickListener(v -> {
             Log.i(TAG, "Clicked on a thing");
