@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: com.amplifyframework:aws-api-appsync:1.17.4@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/785a81b4d6930937d80f28358d7ab0ed/jetified-aws-api-appsync-1.17.4/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/785a81b4d6930937d80f28358d7ab0ed/jetified-aws-api-appsync-1.17.4/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/785a81b4d6930937d80f28358d7ab0ed/jetified-aws-api-appsync-1.17.4/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.amplifyframework/aws-api-appsync/1.17.4/1712ad750c0e7c6fd7a1fcfb42135ce5ce70635d/aws-api-appsync-1.17.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
