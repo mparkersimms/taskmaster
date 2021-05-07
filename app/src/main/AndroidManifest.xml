@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.taskmaster">
+    package="com.mparkersimms.taskmaster">
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -10,20 +10,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TaskMaster">
-        <activity android:name=".TaskItemRecyclerView"></activity>
+        <activity android:name="com.mparkersimms.taskmaster.TaskItemRecyclerView"></activity>
         <activity
-            android:name=".TaskDetailPage"
-            android:parentActivityName=".MainActivity" />
+            android:name="com.mparkersimms.taskmaster.TaskDetailPage"
+            android:parentActivityName="com.mparkersimms.taskmaster.MainActivity" />
         <activity
-            android:name=".SettingsPage"
-            android:parentActivityName=".MainActivity" />
+            android:name="com.mparkersimms.taskmaster.SettingsPage"
+            android:parentActivityName="com.mparkersimms.taskmaster.MainActivity" />
         <activity
-            android:name=".AllTasksPage"
-            android:parentActivityName=".MainActivity" />
+            android:name="com.mparkersimms.taskmaster.AllTasksPage"
+            android:parentActivityName="com.mparkersimms.taskmaster.MainActivity" />
         <activity
-            android:name=".AddTaskPage"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".MainActivity">
+            android:name="com.mparkersimms.taskmaster.AddTaskPage"
+            android:parentActivityName="com.mparkersimms.taskmaster.MainActivity" />
+        <activity android:name="com.mparkersimms.taskmaster.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

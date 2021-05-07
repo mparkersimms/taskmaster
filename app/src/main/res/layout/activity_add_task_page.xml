@@ -50,12 +50,12 @@
         android:id="@+id/addTaskButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="24dp"
         android:text="Add Task"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/taskDescriptionTextView"
-        app:layout_constraintTop_toBottomOf="@+id/taskDescriptionTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/spinnerTeams" />
 
     <TextView
         android:id="@+id/taskTotalTextView"
@@ -100,5 +100,14 @@
         app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toEndOf="@+id/addTaskButton"
         app:layout_constraintTop_toTopOf="@+id/addTaskButton" />
+
+    <Spinner
+        android:id="@+id/spinnerTeams"
+        android:layout_width="257dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/taskDescriptionTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
