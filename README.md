@@ -22,6 +22,9 @@
 -5/7/21
     - Started the process to get the app on the google play store. App is in internal testing phase right now.
 
+- 5/10/21
+    - implemented Cognito into the app. There is now the functionality to sign up, and login/logout in the app using cognito through AWS/Amplify
+
 ## Screenshots
 
 - 4/26/21
@@ -45,4 +48,5 @@
 ![SettingsPage](screenshots/Day8/settings.png)
 ![AddTaskPage](screenshots/Day8/addtaskpage.png)
 ![TaskDetailPage](screenshots/Day8/taskdetailpage.png)
+
 

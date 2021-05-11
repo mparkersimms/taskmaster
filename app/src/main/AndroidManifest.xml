@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mparkersimms.taskmaster">
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -10,20 +11,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TaskMaster">
-        <activity android:name="com.mparkersimms.taskmaster.TaskItemRecyclerView"></activity>
+        <activity android:name=".LoginPage"></activity>
+        <activity android:name=".ConfirmSignupPage" />
+        <activity android:name=".SignupPage" />
+        <activity android:name=".TaskItemRecyclerView" />
         <activity
-            android:name="com.mparkersimms.taskmaster.TaskDetailPage"
-            android:parentActivityName="com.mparkersimms.taskmaster.MainActivity" />
+            android:name=".TaskDetailPage"
+            android:parentActivityName=".MainActivity" />
         <activity
-            android:name="com.mparkersimms.taskmaster.SettingsPage"
-            android:parentActivityName="com.mparkersimms.taskmaster.MainActivity" />
+            android:name=".SettingsPage"
+            android:parentActivityName=".MainActivity" />
         <activity
-            android:name="com.mparkersimms.taskmaster.AllTasksPage"
-            android:parentActivityName="com.mparkersimms.taskmaster.MainActivity" />
+            android:name=".AllTasksPage"
+            android:parentActivityName=".MainActivity" />
         <activity
-            android:name="com.mparkersimms.taskmaster.AddTaskPage"
-            android:parentActivityName="com.mparkersimms.taskmaster.MainActivity" />
-        <activity android:name="com.mparkersimms.taskmaster.MainActivity">
+            android:name=".AddTaskPage"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

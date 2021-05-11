@@ -19,6 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.amplifyframework.AmplifyException;
 import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.api.graphql.model.ModelQuery;
+import com.amplifyframework.auth.AuthUser;
+import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
+import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.generated.model.TaskItem;
 import com.mparkersimms.taskmaster.adapters.TaskItemRecycleViewAdapter;
@@ -36,14 +39,97 @@ public class MainActivity extends AppCompatActivity {
 
     Handler mainThreadHandler;
 
+
+    void signupCognito(){
+        Amplify.Auth.signUp(
+                "m.parker.simms@gmail.com",
+                "password",
+                AuthSignUpOptions.builder().build(),
+                r -> {
+                    Log.i(TAG, "signupCognito: signup successfull" + r.toString());
+                },
+                r-> {
+                    Log.i(TAG, "signupCognito: signup unsuccessfull" + r.toString());
+                }
+        );
+    }
+
+    void confirmSignupCognito(){
+        Amplify.Auth.confirmSignUp(
+                "m.parker.simms@gmail.com",
+                "694095",
+                r -> {
+                    Log.i(TAG, "confirmsignupCognito: signup successfull" + r.toString());
+                },
+                r-> {
+                    Log.i(TAG, "confirmsignupCognito: signup unsuccessfull" + r.toString());
+                }
+        );
+    }
+
+    void loginCognito(){
+        Amplify.Auth.signIn(
+                "m.parker.simms@gmail.com",
+                "password",
+                r -> {
+                    Log.i(TAG, "loginCognito: login successfull" + r.toString());
+                },
+                r-> {
+                    Log.i(TAG, "loginCognito: login unsuccessfull" + r.toString());
+                }
+        );
+    }
+
+    void logoutCognito(){
+        Amplify.Auth.signOut(
+                () -> Log.i(TAG, "Signed out successfully"),
+                error -> Log.e(TAG, error.toString())
+        );
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        try {
+            Amplify.addPlugin(new AWSApiPlugin());
+            // Add this line, to include the Auth plugin.
+            Amplify.addPlugin(new AWSCognitoAuthPlugin());
+            Amplify.configure(getApplicationContext());
+                     Log.i(TAG, "configured amplify");
+        } catch (AmplifyException e) {
+            e.printStackTrace();
+        }
+
+
+//  ====== cognito signup =====
+
+//        signupCognito();
+
+//  ===== cognito confirm signup =====
+
+//        confirmSignupCognito();
+
+//  ===== cognito login =====
+
+//        loginCognito();
+
+//  ===== cognito logout =====
+
+//        logoutCognito();
+
+
 //        taskDatabase = Room.databaseBuilder(getApplicationContext(), TaskDatabase.class, "msimms_tasks")
 //                .allowMainThreadQueries()
 //                .build();
+
+        AuthUser authUser = Amplify.Auth.getCurrentUser();
+        if(authUser != null) {
+            ((TextView) findViewById(R.id.textViewMainUsername)).setText(authUser.getUsername());
+        }
+
     RecyclerView homePageRecyclerView = findViewById(R.id.taskListRecyclerView);
     homePageRecyclerView.setAdapter(
             new TaskItemRecycleViewAdapter(
@@ -81,13 +167,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        try {
-            Amplify.addPlugin(new AWSApiPlugin());
-            Amplify.configure(getApplicationContext());
-            Log.i(TAG, "configured amplify");
-        } catch (AmplifyException e) {
-            e.printStackTrace();
-        }
 //============= build new teams===============
 //        Team newTeam1 = Team.builder()
 //                .name("team1")
@@ -130,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
                 response -> {
                     for(TaskItem taskItem : response.getData()) {
                         taskItems.add(taskItem);
-                        Log.i(TAG, "task:" + taskItem);
+//                        Log.i(TAG, "task:" + taskItem);
                     }
 
                     mainThreadHandler.sendEmptyMessage(1);
@@ -139,6 +218,7 @@ public class MainActivity extends AppCompatActivity {
                 response -> Log.i(TAG, "onCreate: failed to retrieve task" + response.toString())
         );
 
+//  ========== buttons ==============
 
 //   ---------Add a Task button --------
 
@@ -171,40 +251,74 @@ public class MainActivity extends AppCompatActivity {
             startActivity(goToSettingsPageIntent);
         });
 
+//   --------- Signup Button --------
+
+        findViewById(R.id.signUpButton).setOnClickListener(v -> {
+            Intent goToSettingsPageIntent = new Intent(MainActivity.this, SignupPage.class);
+            startActivity(goToSettingsPageIntent);
+        });
+//   --------- ConfirmSignup Button --------
+
+        findViewById(R.id.ConfirmSignUpButton).setOnClickListener(v -> {
+            Intent goToSettingsPageIntent = new Intent(MainActivity.this, ConfirmSignupPage.class);
+            startActivity(goToSettingsPageIntent);
+        });
+
+//   --------- Login Button --------
+
+        findViewById(R.id.LoginButton).setOnClickListener(v -> {
+            Intent goToSettingsPageIntent = new Intent(MainActivity.this, LoginPage.class);
+            startActivity(goToSettingsPageIntent);
+        });
+
+        //   --------- Logout Button --------
+
+        findViewById(R.id.logoutButton).setOnClickListener(v -> {
+            logoutCognito();
+            Intent goToSettingsPageIntent = new Intent(MainActivity.this, MainActivity.class);
+            startActivity(goToSettingsPageIntent);
+
+        });
+
 
         //   ---------Task Detail buttons --------
 
-        String firstTaskString = "Go Climbing";
-        String secondTaskString = "Ride Dirt Bike";
-        String thirdTaskString = "Walk the Dog";
-
-
-        Button firstTaskButton = findViewById(R.id.firstTaskButton);
-        Button secondTaskButton = findViewById(R.id.secondTaskButton);
-        Button thirdTaskButton = findViewById(R.id.thirdTaskButton);
-
-        firstTaskButton.setText(firstTaskString);
-        secondTaskButton.setText(secondTaskString);
-        thirdTaskButton.setText(thirdTaskString);
-
-        firstTaskButton.setOnClickListener(v -> {
-            Intent taskDetailIntent1 = new Intent(MainActivity.this, TaskDetailPage.class);
-            taskDetailIntent1.putExtra("Title", firstTaskString);
-            Log.i(TAG, "onCreate: hit the button");
-            startActivity(taskDetailIntent1);
-        });
-        secondTaskButton.setOnClickListener(v -> {
-            Intent taskDetailIntent2 = new Intent(MainActivity.this, TaskDetailPage.class);
-            taskDetailIntent2.putExtra("Title", secondTaskString);
-            startActivity(taskDetailIntent2);
-        });
-        thirdTaskButton.setOnClickListener(v -> {
-            Intent taskDetailIntent3 = new Intent(MainActivity.this, TaskDetailPage.class);
-            taskDetailIntent3.putExtra("Title", thirdTaskString);
-            startActivity(taskDetailIntent3);
-        });
+//        String firstTaskString = "Go Climbing";
+//        String secondTaskString = "Ride Dirt Bike";
+//        String thirdTaskString = "Walk the Dog";
+//
+//
+//        Button firstTaskButton = findViewById(R.id.firstTaskButton);
+//        Button secondTaskButton = findViewById(R.id.secondTaskButton);
+//        Button thirdTaskButton = findViewById(R.id.thirdTaskButton);
+//
+//        firstTaskButton.setText(firstTaskString);
+//        secondTaskButton.setText(secondTaskString);
+//        thirdTaskButton.setText(thirdTaskString);
+//
+//        firstTaskButton.setOnClickListener(v -> {
+//            Intent taskDetailIntent1 = new Intent(MainActivity.this, TaskDetailPage.class);
+//            taskDetailIntent1.putExtra("Title", firstTaskString);
+//            Log.i(TAG, "onCreate: hit the button");
+//            startActivity(taskDetailIntent1);
+//        });
+//        secondTaskButton.setOnClickListener(v -> {
+//            Intent taskDetailIntent2 = new Intent(MainActivity.this, TaskDetailPage.class);
+//            taskDetailIntent2.putExtra("Title", secondTaskString);
+//            startActivity(taskDetailIntent2);
+//        });
+//        thirdTaskButton.setOnClickListener(v -> {
+//            Intent taskDetailIntent3 = new Intent(MainActivity.this, TaskDetailPage.class);
+//            taskDetailIntent3.putExtra("Title", thirdTaskString);
+//            startActivity(taskDetailIntent3);
+//        });
 
     }
+
+
+
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -212,6 +326,9 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String username = preferences.getString("username", null);
         String greeting = username + "'s Tasks";
+        String userChosenTeamId = preferences.getString("teamId", null);
+        Log.i(TAG, "=============onResume: userChosenTeamId "+ userChosenTeamId);
+        Log.i(TAG, "=============onResume: username "+ username);
         if(username != null){
             ((TextView) findViewById(R.id.homeUsernameDisplay)).setText(greeting);
         }
@@ -219,9 +336,11 @@ public class MainActivity extends AppCompatActivity {
                 ModelQuery.list(TaskItem.class),
                 response -> {
                     for(TaskItem taskItem : response.getData()) {
-                        taskItems.add(taskItem);
-                        Log.i(TAG, "task:" + taskItem);
-                    }
+                            if (taskItem.getTeam().getId().equals(userChosenTeamId)) {
+                                taskItems.add(taskItem);
+//                        Log.i(TAG, "task:" + taskItem);
+                            }
+                        }
                     mainThreadHandler.sendEmptyMessage(1);
                 },
                 response -> Log.i(TAG, "onCreate: failed to retrieve task" + response.toString())
