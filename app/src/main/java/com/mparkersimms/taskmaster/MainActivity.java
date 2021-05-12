@@ -2,16 +2,21 @@ package com.mparkersimms.taskmaster;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.FileUtils;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,14 +29,23 @@ import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.generated.model.TaskItem;
+import com.amplifyframework.storage.s3.AWSS3StoragePlugin;
 import com.mparkersimms.taskmaster.adapters.TaskItemRecycleViewAdapter;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
 public class MainActivity extends AppCompatActivity {
     String TAG = "msimms_main";
+
+    static int REQUEST_CODE = 123;
 
 //    TaskDatabase taskDatabase;
     List<TaskItem> taskItems = new ArrayList<>();
@@ -80,6 +94,71 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+    void uploadTestToS3(){
+        File file = new File(getApplicationContext().getFilesDir(), "ExampleFile");
+
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            writer.append("Example file contents");
+            writer.close();
+        } catch (Exception exception) {
+            Log.e("MyAmplifyApp", "Upload failed", exception);
+        }
+    Amplify.Storage.uploadFile(
+            "ExampleFile",
+            file,
+            r -> {
+                Log.i(TAG, "uploadToS3: successsfull");
+            },
+            r ->{
+                Log.i(TAG, "uploadToS3: unsuccessfull");
+            }
+    );
+    }
+
+    void uploadToS3(File file, String filename){
+        Amplify.Storage.uploadFile(
+                filename,
+                file,
+                r -> {},
+                r -> {}
+        );
+    }
+
+    void getFileFromPhone(){
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        startActivityForResult(intent, REQUEST_CODE);
+    }
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_CODE){
+            File file = new File(getApplicationContext().getFilesDir(), "new file");
+            try{
+                InputStream inputStream = getContentResolver().openInputStream(data.getData());
+                FileUtils.copy(inputStream, new FileOutputStream(file));
+                uploadToS3(file, "test file");
+
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    void downloadFileFromS3(String key){
+        Amplify.Storage.downloadFile(
+                key,
+                new File(getApplicationContext().getFilesDir(), key),
+                r ->{
+                    ImageView i = findViewById(R.id.ImageViewMainActivity);
+                    i.setImageBitmap(BitmapFactory.decodeFile(r.getFile().getPath()));
+                },
+                r -> {});
+    }
+
+
     void logoutCognito(){
         Amplify.Auth.signOut(
                 () -> Log.i(TAG, "Signed out successfully"),
@@ -95,8 +174,8 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             Amplify.addPlugin(new AWSApiPlugin());
-            // Add this line, to include the Auth plugin.
             Amplify.addPlugin(new AWSCognitoAuthPlugin());
+            Amplify.addPlugin(new AWSS3StoragePlugin());
             Amplify.configure(getApplicationContext());
                      Log.i(TAG, "configured amplify");
         } catch (AmplifyException e) {
@@ -119,6 +198,12 @@ public class MainActivity extends AppCompatActivity {
 //  ===== cognito logout =====
 
 //        logoutCognito();
+
+//   ===== upload to s3 =====
+
+//        uploadTestToS3();
+//         getFileFromPhone();
+        downloadFileFromS3("test file");
 
 
 //        taskDatabase = Room.databaseBuilder(getApplicationContext(), TaskDatabase.class, "msimms_tasks")

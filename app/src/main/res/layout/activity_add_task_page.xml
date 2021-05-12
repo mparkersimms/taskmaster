@@ -50,27 +50,27 @@
         android:id="@+id/addTaskButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="44dp"
         android:text="Add Task"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/taskDescriptionTextView"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerTeams" />
+        app:layout_constraintEnd_toEndOf="@+id/chooseImageButton"
+        app:layout_constraintHorizontal_bias="0.725"
+        app:layout_constraintStart_toStartOf="@+id/chooseImageButton"
+        app:layout_constraintTop_toBottomOf="@+id/chooseImageButton" />
 
     <TextView
         android:id="@+id/taskTotalTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="64dp"
         android:text="Total Tasks: 0"
-        app:layout_constraintEnd_toEndOf="@+id/addTaskButton"
+        app:layout_constraintEnd_toStartOf="@+id/addTaskButton"
         app:layout_constraintTop_toBottomOf="@+id/addTaskButton" />
 
     <TextView
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="20dp"
         android:labelFor="@id/taskDescriptionTextView"
         android:text="Task Description"
         app:layout_constraintStart_toStartOf="@+id/taskDescriptionTextView"
@@ -81,13 +81,13 @@
         android:layout_width="364dp"
         android:layout_height="61dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="48dp"
         android:layout_marginEnd="16dp"
         android:ems="10"
         android:hint="Do Something"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.428"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/taskTitleTextView" />
 
@@ -95,11 +95,10 @@
         android:id="@+id/submittedTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/addTaskButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.484"
-        app:layout_constraintStart_toEndOf="@+id/addTaskButton"
-        app:layout_constraintTop_toTopOf="@+id/addTaskButton" />
+        app:layout_constraintEnd_toEndOf="@+id/addTaskButton"
+        app:layout_constraintHorizontal_bias="0.794"
+        app:layout_constraintStart_toEndOf="@+id/taskTotalTextView"
+        tools:layout_editor_absoluteY="609dp" />
 
     <Spinner
         android:id="@+id/spinnerTeams"
@@ -109,5 +108,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/taskDescriptionTextView" />
+
+    <ImageView
+        android:id="@+id/imageViewNewTask"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/chooseImageButton"
+        app:layout_constraintHorizontal_bias="0.208"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerTeams"
+        app:srcCompat="@android:drawable/picture_frame" />
+
+    <Button
+        android:id="@+id/chooseImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:text="Browse"
+        app:layout_constraintEnd_toEndOf="@+id/spinnerTeams"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerTeams" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

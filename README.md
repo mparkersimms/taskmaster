@@ -25,6 +25,10 @@
 - 5/10/21
     - implemented Cognito into the app. There is now the functionality to sign up, and login/logout in the app using cognito through AWS/Amplify
 
+-5/11/21
+    - implemented S3 into the app today. Setup the ability to upload a file from the phone of the user into the Add a Task page. That
+    image then saves to S3 when the button is pushed. The image is then displayed on the detail page for that task if the image exists in the
+    database.
 ## Screenshots
 
 - 4/26/21
