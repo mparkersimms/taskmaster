@@ -19,7 +19,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewMainUsername" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/ImageViewMainActivity"
         android:layout_width="149dp"
         android:layout_height="141dp"
         android:layout_marginTop="32dp"
@@ -36,7 +36,7 @@
         android:layout_marginTop="40dp"
         android:text="Add Tasks"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/ImageViewMainActivity" />
 
     <Button
         android:id="@+id/allTasksButton"
@@ -46,7 +46,7 @@
         android:layout_marginEnd="64dp"
         android:text="All Tasks"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/ImageViewMainActivity" />
 
     <ImageView
         android:id="@+id/settingsButton"
@@ -130,8 +130,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:text="Confirm"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintStart_toEndOf="@+id/ImageViewMainActivity"
+        app:layout_constraintTop_toTopOf="@+id/ImageViewMainActivity" />
 
     <Button
         android:id="@+id/LoginButton"

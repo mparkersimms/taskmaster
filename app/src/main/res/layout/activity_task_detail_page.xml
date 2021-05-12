@@ -20,8 +20,8 @@
 
     <TextView
         android:id="@+id/detailDescription"
-        android:layout_width="328dp"
-        android:layout_height="211dp"
+        android:layout_width="314dp"
+        android:layout_height="80dp"
         android:layout_marginTop="40dp"
         android:text='"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."'
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,7 +45,7 @@
         android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="52dp"
         android:text="Task State:"
         app:layout_constraintStart_toStartOf="@+id/detailDescription"
         app:layout_constraintTop_toBottomOf="@+id/detailDescription" />
@@ -60,4 +60,14 @@
         app:layout_constraintStart_toEndOf="@+id/textView8"
         app:layout_constraintTop_toTopOf="@+id/textView8"
         app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/imageViewTaskDetail"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/detailState"
+        app:layout_constraintTop_toBottomOf="@+id/detailDescription"
+        app:srcCompat="@android:drawable/picture_frame" />
 </androidx.constraintlayout.widget.ConstraintLayout>

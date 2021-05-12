@@ -61,4 +61,7 @@ dependencies {
 // cognito
     implementation 'com.amplifyframework:aws-auth-cognito:1.17.4'
 
+//    s3
+    implementation 'com.amplifyframework:aws-storage-s3:1.17.4'
+
 }
