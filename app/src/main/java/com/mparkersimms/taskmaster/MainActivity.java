@@ -1,5 +1,6 @@
 package com.mparkersimms.taskmaster;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -30,6 +32,8 @@ import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.generated.model.TaskItem;
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.mparkersimms.taskmaster.adapters.TaskItemRecycleViewAdapter;
 
 import java.io.BufferedWriter;
@@ -166,11 +170,23 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        findViewById(R.id.mainActivityView).setOnClickListener(v -> {
+            Log.i(TAG, "onClick: toast why arent you showing up?" + getApplicationContext().toString());
+//        Context context = getApplicationContext();
+//        CharSequence text = "Test toast";
+//        int duration = Toast.LENGTH_LONG;
+
+        Toast.makeText(MainActivity.this, "test toast", Toast.LENGTH_LONG).show();
+//        toast.show();
+        });
 
         try {
             Amplify.addPlugin(new AWSApiPlugin());
@@ -181,6 +197,9 @@ public class MainActivity extends AppCompatActivity {
         } catch (AmplifyException e) {
             e.printStackTrace();
         }
+
+        registerWithFirebaseAndPinpoint();
+
 
 
 //  ====== cognito signup =====
@@ -399,6 +418,21 @@ public class MainActivity extends AppCompatActivity {
 //        });
 
     }
+    void registerWithFirebaseAndPinpoint(){
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+                        // Get new FCM registration token
+                        String token = task.getResult();
+
+                    }
+                });
+    }
 
 
 
@@ -407,6 +441,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        Context context = MainActivity.this;
+        CharSequence text = "Test toast";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        Log.i(TAG, "onResume: toast should have appeared");
+        toast.show();
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String username = preferences.getString("username", null);

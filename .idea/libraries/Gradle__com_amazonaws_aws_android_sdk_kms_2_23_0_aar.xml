@@ -1,9 +1,10 @@
 <component name="libraryTable">
   <library name="Gradle: com.amazonaws:aws-android-sdk-kms:2.23.0@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b6855f5645afc85317c62296c79bbfdd/jetified-aws-android-sdk-kms-2.23.0/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b6855f5645afc85317c62296c79bbfdd/jetified-aws-android-sdk-kms-2.23.0/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b6855f5645afc85317c62296c79bbfdd/jetified-aws-android-sdk-kms-2.23.0/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/54d2c86e3bb29dbbdb970774d35d0c66/jetified-aws-android-sdk-kms-2.23.0/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/54d2c86e3bb29dbbdb970774d35d0c66/jetified-aws-android-sdk-kms-2.23.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/54d2c86e3bb29dbbdb970774d35d0c66/jetified-aws-android-sdk-kms-2.23.0/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

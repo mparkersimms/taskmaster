@@ -1,9 +1,10 @@
 <component name="libraryTable">
   <library name="Gradle: com.amplifyframework:aws-storage-s3:1.17.4@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/4dce2b349d1ba2b9bf70681e807dc9f8/jetified-aws-storage-s3-1.17.4/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/4dce2b349d1ba2b9bf70681e807dc9f8/jetified-aws-storage-s3-1.17.4/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/4dce2b349d1ba2b9bf70681e807dc9f8/jetified-aws-storage-s3-1.17.4/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/c75ccb9a3ebfbd2ae85ede2fec15d8b9/jetified-aws-storage-s3-1.17.4/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/c75ccb9a3ebfbd2ae85ede2fec15d8b9/jetified-aws-storage-s3-1.17.4/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/c75ccb9a3ebfbd2ae85ede2fec15d8b9/jetified-aws-storage-s3-1.17.4/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
