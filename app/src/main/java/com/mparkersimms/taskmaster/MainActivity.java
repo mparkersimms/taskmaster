@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.amplifyframework.AmplifyException;
+import com.amplifyframework.analytics.AnalyticsEvent;
 import com.amplifyframework.analytics.pinpoint.AWSPinpointAnalyticsPlugin;
 import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.api.graphql.model.ModelQuery;
@@ -57,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     static int REQUEST_CODE = 123;
     static String TASK_CHANNEL = "Task Channel";
 
+    static String OPENED_APP_EVENT = "Opened Task Master";
+
     //    TaskDatabase taskDatabase;
     List<TaskItem> taskItems = new ArrayList<>();
 
@@ -81,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     void confirmSignupCognito() {
         Amplify.Auth.confirmSignUp(
                 "m.parker.simms@gmail.com",
-                "694095",
+                "369814",
                 r -> {
                     Log.i(TAG, "confirmsignupCognito: signup successfull" + r.toString());
                 },
@@ -92,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void loginCognito() {
+        Log.i(TAG, "loginCognito: testing the method");
         Amplify.Auth.signIn(
                 "m.parker.simms@gmail.com",
                 "password",
@@ -211,7 +215,22 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            configureNotificationChannel();
+        }
         registerWithFirebaseAndPinpoint();
+        callTestNotification();
+
+
+        AnalyticsEvent e = AnalyticsEvent.builder()
+                .name(OPENED_APP_EVENT)
+                .addProperty("motorcyles", "are cool")
+                .addProperty("climbing", "is a cool sport")
+                .addProperty("i ride motorcyles", true)
+                .addProperty("miles riden", 500)
+                .build();
+
+        Amplify.Analytics.recordEvent(e);
 
 
 
@@ -225,7 +244,8 @@ public class MainActivity extends AppCompatActivity {
 
 //  ===== cognito login =====
 
-        loginCognito();
+//        loginCognito();
+
 //  ===== cognito logout =====
 
 //        logoutCognito();
@@ -346,6 +366,8 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent goToAddTasksPageIntent = new Intent(MainActivity.this, AddTaskPage.class);
                 startActivity(goToAddTasksPageIntent);
+                callNotification("Add a task page", "The user navigated to the add a task page");
+
             }
         });
 
@@ -357,6 +379,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent gotToAllTasksPageIntent = new Intent(MainActivity.this, AllTasksPage.class);
                 startActivity(gotToAllTasksPageIntent);
+                callNotification("All tasks page", "The user navigated to the all tasks page");
+
             }
 
         });
@@ -366,6 +390,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.settingsButton).setOnClickListener(v -> {
             Intent goToSettingsPageIntent = new Intent(MainActivity.this, SettingsPage.class);
             startActivity(goToSettingsPageIntent);
+            callNotification("Settings page", "The user navigated to the settings page");
         });
 
 //   --------- Signup Button --------
@@ -373,12 +398,14 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.signUpButton).setOnClickListener(v -> {
             Intent goToSettingsPageIntent = new Intent(MainActivity.this, SignupPage.class);
             startActivity(goToSettingsPageIntent);
+            callNotification("Sign up page", "The user navigated to the signup page");
         });
 //   --------- ConfirmSignup Button --------
 
         findViewById(R.id.ConfirmSignUpButton).setOnClickListener(v -> {
             Intent goToSettingsPageIntent = new Intent(MainActivity.this, ConfirmSignupPage.class);
             startActivity(goToSettingsPageIntent);
+            callNotification("Confirmation page", "The user navigated to the confirmation page");
         });
 
 //   --------- Login Button --------
@@ -386,6 +413,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.LoginButton).setOnClickListener(v -> {
             Intent goToSettingsPageIntent = new Intent(MainActivity.this, LoginPage.class);
             startActivity(goToSettingsPageIntent);
+            callNotification("Login", "The user logged in");
         });
 
         //   --------- Logout Button --------
@@ -394,6 +422,7 @@ public class MainActivity extends AppCompatActivity {
             logoutCognito();
             Intent goToSettingsPageIntent = new Intent(MainActivity.this, MainActivity.class);
             startActivity(goToSettingsPageIntent);
+            callNotification("Logout", "The user logged out");
 
         });
 
@@ -526,6 +555,17 @@ public class MainActivity extends AppCompatActivity {
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
             notificationManager.notify(1, builder.build());
         }
+
+    public void callNotification(String title, String text){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, TASK_CHANNEL)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(1, builder.build());
+    }
 
 
 }
