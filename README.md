@@ -29,6 +29,9 @@
     - implemented S3 into the app today. Setup the ability to upload a file from the phone of the user into the Add a Task page. That
     image then saves to S3 when the button is pushed. The image is then displayed on the detail page for that task if the image exists in the
     database.
+
+- 5/13/21
+    - added anayltics implementations
 ## Screenshots
 
 - 4/26/21
@@ -53,4 +56,7 @@
 ![AddTaskPage](screenshots/Day8/addtaskpage.png)
 ![TaskDetailPage](screenshots/Day8/taskdetailpage.png)
 
+- 5/13/21
 
+![analytics](screenshots/analytics.png)
+![notifications](screenshots/notificationsonapp.png)
