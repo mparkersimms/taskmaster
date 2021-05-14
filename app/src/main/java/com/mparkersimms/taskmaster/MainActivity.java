@@ -1,5 +1,7 @@
 package com.mparkersimms.taskmaster;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,10 +22,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.amplifyframework.AmplifyException;
+import com.amplifyframework.analytics.AnalyticsEvent;
+import com.amplifyframework.analytics.pinpoint.AWSPinpointAnalyticsPlugin;
 import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.api.graphql.model.ModelQuery;
 import com.amplifyframework.auth.AuthUser;
@@ -50,15 +56,18 @@ public class MainActivity extends AppCompatActivity {
     String TAG = "msimms_main";
 
     static int REQUEST_CODE = 123;
+    static String TASK_CHANNEL = "Task Channel";
 
-//    TaskDatabase taskDatabase;
+    static String OPENED_APP_EVENT = "Opened Task Master";
+
+    //    TaskDatabase taskDatabase;
     List<TaskItem> taskItems = new ArrayList<>();
 
 
     Handler mainThreadHandler;
 
 
-    void signupCognito(){
+    void signupCognito() {
         Amplify.Auth.signUp(
                 "m.parker.simms@gmail.com",
                 "password",
@@ -66,39 +75,40 @@ public class MainActivity extends AppCompatActivity {
                 r -> {
                     Log.i(TAG, "signupCognito: signup successfull" + r.toString());
                 },
-                r-> {
+                r -> {
                     Log.i(TAG, "signupCognito: signup unsuccessfull" + r.toString());
                 }
         );
     }
 
-    void confirmSignupCognito(){
+    void confirmSignupCognito() {
         Amplify.Auth.confirmSignUp(
                 "m.parker.simms@gmail.com",
-                "694095",
+                "369814",
                 r -> {
                     Log.i(TAG, "confirmsignupCognito: signup successfull" + r.toString());
                 },
-                r-> {
+                r -> {
                     Log.i(TAG, "confirmsignupCognito: signup unsuccessfull" + r.toString());
                 }
         );
     }
 
-    void loginCognito(){
+    void loginCognito() {
+        Log.i(TAG, "loginCognito: testing the method");
         Amplify.Auth.signIn(
                 "m.parker.simms@gmail.com",
                 "password",
                 r -> {
                     Log.i(TAG, "loginCognito: login successfull" + r.toString());
                 },
-                r-> {
+                r -> {
                     Log.i(TAG, "loginCognito: login unsuccessfull" + r.toString());
                 }
         );
     }
 
-    void uploadTestToS3(){
+    void uploadTestToS3() {
         File file = new File(getApplicationContext().getFilesDir(), "ExampleFile");
 
         try {
@@ -108,62 +118,66 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception exception) {
             Log.e("MyAmplifyApp", "Upload failed", exception);
         }
-    Amplify.Storage.uploadFile(
-            "ExampleFile",
-            file,
-            r -> {
-                Log.i(TAG, "uploadToS3: successsfull");
-            },
-            r ->{
-                Log.i(TAG, "uploadToS3: unsuccessfull");
-            }
-    );
-    }
-
-    void uploadToS3(File file, String filename){
         Amplify.Storage.uploadFile(
-                filename,
+                "ExampleFile",
                 file,
-                r -> {},
-                r -> {}
+                r -> {
+                    Log.i(TAG, "uploadToS3: successsfull");
+                },
+                r -> {
+                    Log.i(TAG, "uploadToS3: unsuccessfull");
+                }
         );
     }
 
-    void getFileFromPhone(){
+    void uploadToS3(File file, String filename) {
+        Amplify.Storage.uploadFile(
+                filename,
+                file,
+                r -> {
+                },
+                r -> {
+                }
+        );
+    }
+
+    void getFileFromPhone() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         startActivityForResult(intent, REQUEST_CODE);
     }
+
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_CODE){
+        if (requestCode == REQUEST_CODE) {
             File file = new File(getApplicationContext().getFilesDir(), "new file");
-            try{
+            try {
                 InputStream inputStream = getContentResolver().openInputStream(data.getData());
                 FileUtils.copy(inputStream, new FileOutputStream(file));
                 uploadToS3(file, "test file");
 
-            }catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    void downloadFileFromS3(String key){
+    void downloadFileFromS3(String key) {
         Amplify.Storage.downloadFile(
                 key,
                 new File(getApplicationContext().getFilesDir(), key),
-                r ->{
+                r -> {
                     ImageView i = findViewById(R.id.ImageViewMainActivity);
                     i.setImageBitmap(BitmapFactory.decodeFile(r.getFile().getPath()));
                 },
-                r -> {});
+                r -> {
+                });
     }
 
 
-    void logoutCognito(){
+    void logoutCognito() {
         Amplify.Auth.signOut(
                 () -> Log.i(TAG, "Signed out successfully"),
                 error -> Log.e(TAG, error.toString())
@@ -176,6 +190,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
 
         findViewById(R.id.mainActivityView).setOnClickListener(v -> {
@@ -192,13 +208,29 @@ public class MainActivity extends AppCompatActivity {
             Amplify.addPlugin(new AWSApiPlugin());
             Amplify.addPlugin(new AWSCognitoAuthPlugin());
             Amplify.addPlugin(new AWSS3StoragePlugin());
+            Amplify.addPlugin(new AWSPinpointAnalyticsPlugin(getApplication()));
             Amplify.configure(getApplicationContext());
                      Log.i(TAG, "configured amplify");
         } catch (AmplifyException e) {
             e.printStackTrace();
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            configureNotificationChannel();
+        }
         registerWithFirebaseAndPinpoint();
+        callTestNotification();
+
+
+        AnalyticsEvent e = AnalyticsEvent.builder()
+                .name(OPENED_APP_EVENT)
+                .addProperty("motorcyles", "are cool")
+                .addProperty("climbing", "is a cool sport")
+                .addProperty("i ride motorcyles", true)
+                .addProperty("miles riden", 500)
+                .build();
+
+        Amplify.Analytics.recordEvent(e);
 
 
 
@@ -311,6 +343,7 @@ public class MainActivity extends AppCompatActivity {
         Amplify.API.query(
         ModelQuery.list(TaskItem.class),
                 response -> {
+                    Log.i(TAG, "onCreate: " + response);
                     for(TaskItem taskItem : response.getData()) {
                         taskItems.add(taskItem);
 //                        Log.i(TAG, "task:" + taskItem);
@@ -333,6 +366,8 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent goToAddTasksPageIntent = new Intent(MainActivity.this, AddTaskPage.class);
                 startActivity(goToAddTasksPageIntent);
+                callNotification("Add a task page", "The user navigated to the add a task page");
+
             }
         });
 
@@ -344,6 +379,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent gotToAllTasksPageIntent = new Intent(MainActivity.this, AllTasksPage.class);
                 startActivity(gotToAllTasksPageIntent);
+                callNotification("All tasks page", "The user navigated to the all tasks page");
+
             }
 
         });
@@ -353,6 +390,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.settingsButton).setOnClickListener(v -> {
             Intent goToSettingsPageIntent = new Intent(MainActivity.this, SettingsPage.class);
             startActivity(goToSettingsPageIntent);
+            callNotification("Settings page", "The user navigated to the settings page");
         });
 
 //   --------- Signup Button --------
@@ -360,12 +398,14 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.signUpButton).setOnClickListener(v -> {
             Intent goToSettingsPageIntent = new Intent(MainActivity.this, SignupPage.class);
             startActivity(goToSettingsPageIntent);
+            callNotification("Sign up page", "The user navigated to the signup page");
         });
 //   --------- ConfirmSignup Button --------
 
         findViewById(R.id.ConfirmSignUpButton).setOnClickListener(v -> {
             Intent goToSettingsPageIntent = new Intent(MainActivity.this, ConfirmSignupPage.class);
             startActivity(goToSettingsPageIntent);
+            callNotification("Confirmation page", "The user navigated to the confirmation page");
         });
 
 //   --------- Login Button --------
@@ -373,6 +413,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.LoginButton).setOnClickListener(v -> {
             Intent goToSettingsPageIntent = new Intent(MainActivity.this, LoginPage.class);
             startActivity(goToSettingsPageIntent);
+            callNotification("Login", "The user logged in");
         });
 
         //   --------- Logout Button --------
@@ -381,6 +422,7 @@ public class MainActivity extends AppCompatActivity {
             logoutCognito();
             Intent goToSettingsPageIntent = new Intent(MainActivity.this, MainActivity.class);
             startActivity(goToSettingsPageIntent);
+            callNotification("Logout", "The user logged out");
 
         });
 
@@ -489,6 +531,41 @@ public class MainActivity extends AppCompatActivity {
 //        startActivity(goToDetailPageIntent);
 //
 //    }
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    void configureNotificationChannel(){
+        String CHANNEL_ID = TASK_CHANNEL;
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                "task info",
+                NotificationManager.IMPORTANCE_DEFAULT);
+        channel.enableLights(true);
+        channel.enableVibration(true);
+        channel.setDescription("information about tasks");
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+    };
+
+        public void callTestNotification(){
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, TASK_CHANNEL)
+                    .setSmallIcon(R.drawable.ic_launcher_background)
+                    .setContentTitle("yep")
+                    .setContentText( "test")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+            notificationManager.notify(1, builder.build());
+        }
+
+    public void callNotification(String title, String text){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, TASK_CHANNEL)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(1, builder.build());
+    }
 
 
 }

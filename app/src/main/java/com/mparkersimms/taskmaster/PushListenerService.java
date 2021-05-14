@@ -34,7 +34,7 @@ public class PushListenerService extends FirebaseMessagingService {
 //        intent.putExtra("data", remoteMessage.getData());
 //        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NotificationCompat.CATEGORY_REMINDER)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), MainActivity.TASK_CHANNEL)
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setContentTitle(remoteMessage.getFrom())
                 .setContentText(remoteMessage.getSentTime() + "")

@@ -14,5 +14,3 @@ type Team @model{
     taskItems: [TaskItem] @connection(keyName: "team", fields:["id"])
 
 }
-
-
