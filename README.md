@@ -32,6 +32,9 @@
 
 - 5/13/21
     - added anayltics implementations
+
+    -5/17/21
+    - added the functionality to upload and share a picture from another app to this app. 
 ## Screenshots
 
 - 4/26/21
@@ -60,3 +63,4 @@
 
 ![analytics](screenshots/analytics.png)
 ![notifications](screenshots/notificationsonapp.png)
+

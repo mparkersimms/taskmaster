@@ -2,6 +2,7 @@ package com.mparkersimms.taskmaster;
 
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.FileUtils;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -186,6 +188,48 @@ public class AddTaskPage extends AppCompatActivity {
             startActivityForResult(intent, REQUEST_CODE);
 
         });
+
+        checkDataFromIntentFilter();
+    }
+
+    void checkDataFromIntentFilter(){
+        // To share text: setup the intent-filter in your androidManifest.XML on the activity of your choice
+        // Read the intent, check for type "text/plain" when that activity loads, get the text
+
+        // To share image: setup the intent-filter in your androidManifest.XML on the activity of your choice
+        // Read the intent, check for type "image/*" when that activity loads, get the data
+
+        Intent intent = getIntent();
+        if(intent.getType().equals("text/plain")){
+            //preload the sent text into the sucked up thing form
+
+            String text = intent.getStringExtra(Intent.EXTRA_TEXT);
+
+            EditText et = findViewById(R.id.taskDescriptionTextView);
+            et.setText(text);
+
+
+        } else if(intent.getType().startsWith("image/")){ // image/jpg
+            //preload the image into the instance variable File and the instance variabl e Bitmap
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                loadImageFromIntentUsingUri(uri);
+            }
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    void loadImageFromIntentUsingUri(Uri uri){
+        fileToUpload = new File(getApplicationContext().getFilesDir(), "tempFile");
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            FileUtils.copy(inputStream, new FileOutputStream(fileToUpload));
+
+            ImageView i = findViewById(R.id.imageViewNewTask);
+            i.setImageBitmap(BitmapFactory.decodeFile(fileToUpload.getPath()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
