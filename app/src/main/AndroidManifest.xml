@@ -17,7 +17,8 @@
         <activity android:name=".TaskItemRecyclerView" />
         <activity
             android:name=".TaskDetailPage"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity">
+        </activity>
         <activity
             android:name=".SettingsPage"
             android:parentActivityName=".MainActivity" />
@@ -26,7 +27,14 @@
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".AddTaskPage"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity" >
+        <intent-filter android:label="task image">
+            <action android:name="android.intent.action.SEND"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+            <data android:mimeType="image/*"/>
+            <data android:mimeType="text/plain"/>
+        </intent-filter>
+        </activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
