@@ -34,7 +34,10 @@
     - added anayltics implementations
 
     -5/17/21
-    - added the functionality to upload and share a picture from another app to this app. 
+    - added the functionality to upload and share a picture from another app to this app.
+
+-5/18/21
+    - implemented location services in the app
 ## Screenshots
 
 - 4/26/21
@@ -63,4 +66,6 @@
 
 ![analytics](screenshots/analytics.png)
 ![notifications](screenshots/notificationsonapp.png)
+
+
 

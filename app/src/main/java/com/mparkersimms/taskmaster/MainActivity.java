@@ -1,11 +1,15 @@
 package com.mparkersimms.taskmaster;
 
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.FileUtils;
@@ -22,6 +26,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,7 +43,14 @@ import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.generated.model.TaskItem;
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.CancellationToken;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnTokenCanceledListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.mparkersimms.taskmaster.adapters.TaskItemRecycleViewAdapter;
 
@@ -50,6 +62,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringJoiner;
 
 public class MainActivity extends AppCompatActivity {
@@ -59,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
     static String TASK_CHANNEL = "Task Channel";
 
     static String OPENED_APP_EVENT = "Opened Task Master";
+
+    FusedLocationProviderClient locationProviderClient;
+    Geocoder geocoder;
 
     //    TaskDatabase taskDatabase;
     List<TaskItem> taskItems = new ArrayList<>();
@@ -192,9 +208,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-
-
-        findViewById(R.id.mainActivityView).setOnClickListener(v -> {
+         requestLocationPermissions();
+         loadLocationProviderClientAndGeocoder();
+          getCurrentLocation();
+          subscribeToLocationUpdates();
+          findViewById(R.id.mainActivityView).setOnClickListener(v -> {
             Log.i(TAG, "onClick: toast why arent you showing up?" + getApplicationContext().toString());
 //        Context context = getApplicationContext();
 //        CharSequence text = "Test toast";
@@ -565,6 +583,121 @@ public class MainActivity extends AppCompatActivity {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(1, builder.build());
+    }
+
+    void requestLocationPermissions() {
+        // 1. Permissions in the manifest
+        // 2. request permissions
+        // 3. Load the FusedLocationProviderClient
+        // 4. Get a location with getCurrentLocation
+        // 5 Set up a location subscription with an interval time and a callback
+
+
+        requestPermissions(
+                new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION, //gps
+                        Manifest.permission.ACCESS_COARSE_LOCATION // other services like wifi and 4g
+                },
+                1
+        );
+    }
+
+    void loadLocationProviderClientAndGeocoder() {
+        locationProviderClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
+        geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+
+    }
+
+    void getCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.i(TAG, "getCurrentLocation: permission not granted");
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        locationProviderClient.flushLocations();
+        locationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
+            @Override
+            public boolean isCancellationRequested() {
+                return false;
+            }
+
+            @NonNull
+            @Override
+            public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
+                return null;
+            }
+        })
+                .addOnCompleteListener(
+                        data -> {
+//                            full access to the data, but we probably just need onSuccess for our app
+                            Log.i(TAG, "onComplete: " + data.toString());
+                        }
+                )
+                .addOnSuccessListener(location -> {
+                    if (location != null) {
+                        Log.i(TAG, "onSuccess: " + location.toString());
+//                        Log.i(TAG, "onSuccess: " + location.);
+                        try {
+                            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 5);
+                            Log.i(TAG, "getCurrentLocation: addresses" + addresses.toString());
+                            String streetAddress = addresses.get(0).getAddressLine(0);
+                            Log.i(TAG, "getCurrentLocation: " + streetAddress);
+                        } catch (IOException e) {
+                            Log.e(TAG, "getCurrentLocation: failed");
+                            e.printStackTrace();
+                        }
+
+                    }
+                })
+
+                .addOnCanceledListener(() -> Log.i(TAG, "onCanceled: it was canceled"))
+                .addOnFailureListener(error -> Log.i(TAG, "onFailure: " + error.toString()));
+    }
+
+    ;
+
+    void subscribeToLocationUpdates() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setInterval(1000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        LocationCallback locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                try {
+                    String address = geocoder.getFromLocation(
+                            locationResult.getLastLocation().getLatitude(),
+                            locationResult.getLastLocation().getLongitude(),
+                            1
+                    ).get(0).getAddressLine(0);
+                    Log.i(TAG, "onLocationResult subscribed: " + address);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+//        TODO: start a new thread
+        locationProviderClient.requestLocationUpdates(locationRequest, locationCallback, getMainLooper());
     }
 
 
